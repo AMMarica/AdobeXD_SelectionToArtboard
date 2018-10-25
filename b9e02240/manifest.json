@@ -1,10 +1,10 @@
 {
-    "id": "Selection to Artboard Plugin",
+    "id": "b9e02240",
     "name": "Selection to Artboard",
     "version": "0.0.1",
     "host": {
         "app": "XD",
-        "minVersion": "10.0.10.24"
+        "minVersion": "13.0.0"
     },
     "uiEntryPoints": [
         {
