@@ -6,6 +6,58 @@ var scenegraph = require('scenegraph');
 var commands = require('commands');
 var nrArt = 0;
 
+/**
+* Shorthand for creating Elements.
+* @param {*} tag The tag name of the element.
+* @param {*} [props] Optional props.
+* @param {*} children Child elements or strings
+*/
+function h(tag, props, ...children) {
+    let element = document.createElement(tag);
+    if (props) {
+        if (props.nodeType || typeof props !== "object") {
+            children.unshift(props);
+        }
+        else {
+            for (let name in props) {
+                let value = props[name];
+                if (name == "style") {
+                    Object.assign(element.style, value);
+                }
+                else {
+                    element.setAttribute(name, value);
+                    element[name] = value;
+                }
+            }
+        }
+    }
+    for (let child of children) {
+        element.appendChild(typeof child === "object" ? child : document.createTextNode(child));
+    }
+    return element;
+}
+
+let dialog;
+function getDialog() {
+    if (dialog == null) {
+        dialog =
+            h("dialog",
+                h("form", { style: { width: 360 } },
+                    h("h1", "Selection to Artboard Plugin"),
+                    h("hr", ""),
+                    h("p", ""),
+                    h("p", "Please select one or more layers."),
+                    h("p", ""),
+                    h("footer",
+                        h("button", { uxpVariant:"cta", type:"submit", onclick() { dialog.close() } }, "OK")
+                    )
+                )
+            )
+    }
+    return dialog;
+}
+
+
 // Global coordinates of Top Left Corner of Selection
 function findTopLeftCornerOfSelection(userSelection) {
     var minX = userSelection[0].globalBounds.x,
@@ -39,10 +91,11 @@ function checkParentArtboard(selection, root) {
 }
 
 function execution (selection, root) {
-    if (selection.items.length == 0)
+    if (selection.items.length == 0 || selection.items[0] instanceof scenegraph.Artboard) {
+        document.body.appendChild(getDialog()).showModal();
         return;
-    if (selection.items[0] instanceof scenegraph.Artboard)
-        return;
+    }
+
     var topLeft = findTopLeftCornerOfSelection(selection.items),
         bottomRight = findBottomRightCornerOfSelection(selection.items);
     // The selection will be copied on a new custom sized Artboard
