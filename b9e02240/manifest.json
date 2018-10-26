@@ -1,7 +1,7 @@
 {
     "id": "b9e02240",
     "name": "Selection to Artboard",
-    "version": "0.0.1",
+    "version": "1.0.0",
     "host": {
         "app": "XD",
         "minVersion": "13.0.0"
